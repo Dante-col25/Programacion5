@@ -17,11 +17,3 @@ Repositorio del proyecto de clase.
 | PATCH | `/:id` | updateMateria |
 | DELETE | `/:id` | deleteMateria |
 
-## Cómo correrlo
-
-```bash
-cd studentFlow_back
-npm install
-cp .env.example .env   # y completar DB_PASSWORD
-npm run dev
-```
