@@ -157,6 +157,29 @@ export async function findByIdAndUserId(id, userId) {
 }
 
 /**
+ * Busca las tareas de una materia que pertenece al usuario indicado.
+ *
+ * @async
+ * @function findTareasByMateriaIdAndUserId
+ * @param {string|number} materiaId - Identificador de la materia.
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @returns {Promise<Object[]>} Tareas asociadas a la materia y al usuario.
+ */
+export async function findTareasByMateriaIdAndUserId(materiaId, userId) {
+  const [rows] = await pool.execute(
+    `SELECT t.*
+     FROM tarea t
+     INNER JOIN materia m
+       ON m.id_materia = t.id_materia
+      AND m.id_usuario = t.id_usuario
+     WHERE t.id_materia = ? AND t.id_usuario = ?`,
+    [materiaId, userId]
+  );
+
+  return rows;
+}
+
+/**
  * Inserta una materia y recupera el registro creado.
  *
  * @async

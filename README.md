@@ -12,8 +12,10 @@ Repositorio del proyecto de clase.
 |--------|------|---------|
 | GET | `/` | listMaterias |
 | GET | `/:id` | getMateriaById |
+| GET | `/:id/tareas` | listTareasByMateriaId |
 | POST | `/` | createMateria |
 | PUT | `/:id` | replaceMateria |
 | PATCH | `/:id` | updateMateria |
 | DELETE | `/:id` | deleteMateria |
 
+El endpoint `GET /api/v1/materias/:id/tareas` devuelve las tareas de la materia indicada que pertenece al usuario autenticado. El ID de usuario se obtiene del contexto de autenticación (`request.user.id`) y se usa para verificar la materia y filtrar las tareas.
