@@ -11,6 +11,14 @@ const sortableFields = {
     updatedAt: "m.updated_at"
 }
 
+/**
+ * Construye una cláusula ORDER BY usando únicamente columnas permitidas.
+ *
+ * @function normalizeSort
+ * @param {string|undefined} sort - Nombre público de la columna por la que se ordenará.
+ * @param {string|undefined} order - Dirección solicitada (`asc` o `desc`).
+ * @returns {string} Expresión de ordenamiento SQL segura.
+ */
 function normalizeSort(sort, order){
 
     const column = sortableFields[sort] || sortableFields.nombre;
@@ -19,6 +27,13 @@ function normalizeSort(sort, order){
 
 }
 
+/**
+ * Convierte una fila de la base de datos al formato de materia de la API.
+ *
+ * @function mapMateria
+ * @param {Object} row - Fila con los alias de columnas definidos en las consultas.
+ * @returns {Object} Materia con sus campos normalizados.
+ */
 function mapMateria(row) {
   return {
     id: row.id,
@@ -33,6 +48,21 @@ function mapMateria(row) {
   };
 }
 
+/**
+ * Consulta las materias de un usuario aplicando filtros, orden y paginación.
+ *
+ * @async
+ * @function findAllByUserId
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @param {Object} [filters={}] - Filtros de búsqueda y opciones de paginación.
+ * @param {boolean} [filters.activa] - Filtra por estado activo.
+ * @param {string} [filters.search] - Texto buscado en nombre o código.
+ * @param {string} [filters.sort] - Campo de ordenamiento.
+ * @param {string} [filters.order] - Dirección del ordenamiento.
+ * @param {number} [filters.page] - Página de resultados.
+ * @param {number} [filters.limit] - Cantidad de resultados por página.
+ * @returns {Promise<{materias: Object[], total: number}>} Filas de materias y cantidad total coincidente.
+ */
 export async function findAllByUserId(userId, filters = {}) {
 
   const conditions = ["m.id_usuario = ?"];
@@ -93,6 +123,15 @@ export async function findAllByUserId(userId, filters = {}) {
   };
 }
 
+/**
+ * Busca una materia por su ID y el ID de su propietario.
+ *
+ * @async
+ * @function findByIdAndUserId
+ * @param {string|number} id - Identificador de la materia.
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @returns {Promise<Object|null>} Materia encontrada o null si no existe para ese usuario.
+ */
 export async function findByIdAndUserId(id, userId) {
 
   const [rows] = await pool.execute(
@@ -117,6 +156,15 @@ export async function findByIdAndUserId(id, userId) {
   return rows[0] ? mapMateria(rows[0]) : null;
 }
 
+/**
+ * Inserta una materia y recupera el registro creado.
+ *
+ * @async
+ * @function createMateria
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @param {Object} materia - Datos de la materia que se insertará.
+ * @returns {Promise<Object|null>} Materia creada, o null si no se pudo recuperar.
+ */
 export async function createMateria(userId, materia) {
   const [result] = await pool.execute(
     `INSERT INTO materia (id_usuario, nombre, codigo, color, creditos, activa)
@@ -134,6 +182,16 @@ export async function createMateria(userId, materia) {
   return findByIdAndUserId(result.insertId, userId);
 }
 
+/**
+ * Comprueba si el código ya pertenece a otra materia del usuario.
+ *
+ * @async
+ * @function existsByCode
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @param {string} codigo - Código que se comprobará.
+ * @param {string|number} [excludeId] - ID que se excluye de la comprobación.
+ * @returns {Promise<boolean>} Indica si se encontró otra materia con ese código.
+ */
 export async function existsByCode(userId, codigo, excludeId) {
   const params = [userId, codigo];
   let sql = "SELECT 1 FROM materia WHERE id_usuario = ? AND codigo = ?";
@@ -149,6 +207,16 @@ export async function existsByCode(userId, codigo, excludeId) {
   return rows.length > 0;
 }
 
+/**
+ * Comprueba si el nombre ya pertenece a otra materia del usuario.
+ *
+ * @async
+ * @function existsByName
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @param {string} nombre - Nombre que se comprobará.
+ * @param {string|number} [excludeId] - ID que se excluye de la comprobación.
+ * @returns {Promise<boolean>} Indica si se encontró otra materia con ese nombre.
+ */
 export async function existsByName(userId, nombre, excludeId) {
   const params = [userId, nombre];
   let sql = "SELECT 1 FROM materia WHERE id_usuario = ? AND nombre = ?";
@@ -164,6 +232,16 @@ export async function existsByName(userId, nombre, excludeId) {
   return rows.length > 0;
 }
 
+/**
+ * Actualiza únicamente los campos proporcionados de una materia.
+ *
+ * @async
+ * @function patchMateria
+ * @param {string|number} id - Identificador de la materia que se actualizará.
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @param {Object} partialMateria - Campos nuevos; los no definidos se conservan.
+ * @returns {Promise<Object|null>} Materia actualizada, o null si no se pudo recuperar.
+ */
 export async function patchMateria(id, userId, partialMateria) {
   const fields = [];
   const params = [];
@@ -209,6 +287,15 @@ export async function patchMateria(id, userId, partialMateria) {
   return findByIdAndUserId(id, userId);
 }
 
+/**
+ * Elimina una materia perteneciente al usuario indicado.
+ *
+ * @async
+ * @function deleteMateria
+ * @param {string|number} id - Identificador de la materia que se eliminará.
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @returns {Promise<boolean>} Indica si se eliminó una fila.
+ */
 export async function deleteMateria(id, userId) {
   const [result] = await pool.execute(
     "DELETE FROM materia WHERE id_materia = ? AND id_usuario = ?",
@@ -218,6 +305,16 @@ export async function deleteMateria(id, userId) {
   return result.affectedRows > 0;
 }
 
+/**
+ * Reemplaza todos los campos editables de una materia existente.
+ *
+ * @async
+ * @function updateMateria
+ * @param {string|number} id - Identificador de la materia que se actualizará.
+ * @param {string|number} userId - Identificador del usuario propietario.
+ * @param {Object} materia - Conjunto completo de campos nuevos.
+ * @returns {Promise<Object|null>} Materia actualizada, o null si no se pudo recuperar.
+ */
 export async function updateMateria(id, userId, materia) {
   await pool.execute(
     `UPDATE materia

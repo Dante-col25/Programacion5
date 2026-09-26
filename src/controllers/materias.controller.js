@@ -6,6 +6,17 @@ import {
    validateMateriaId,
    validatePatchMateria
 } from "../validators/materias.validator.js";
+
+/**
+ * Atiende la consulta paginada de materias del usuario autenticado.
+ *
+ * @async
+ * @function listMaterias
+ * @param {import("express").Request} request - Solicitud HTTP con filtros en `query` y usuario autenticado.
+ * @param {import("express").Response} response - Respuesta HTTP.
+ * @param {import("express").NextFunction} next - Middleware para propagar errores.
+ * @returns {Promise<import("express").Response|void>} Respuesta con la lista y sus metadatos, o delegación del error.
+ */
 export async function listMaterias(request, response, next) {
  try {
    const filters = validateMateriaListQuery(request.query);
@@ -15,6 +26,17 @@ export async function listMaterias(request, response, next) {
    return next(error);
  }
 }
+
+/**
+ * Atiende la consulta de una materia por ID para el usuario autenticado.
+ *
+ * @async
+ * @function getMateriaById
+ * @param {import("express").Request} request - Solicitud HTTP con el ID en `params`.
+ * @param {import("express").Response} response - Respuesta HTTP.
+ * @param {import("express").NextFunction} next - Middleware para propagar errores.
+ * @returns {Promise<import("express").Response|void>} Respuesta con la materia, o delegación del error.
+ */
 export async function getMateriaById(request, response, next) {
  try {
    const id  = validateMateriaId(request.params.id);
@@ -24,6 +46,17 @@ export async function getMateriaById(request, response, next) {
    return next(error);
  }
 }
+
+/**
+ * Valida y crea una materia para el usuario autenticado.
+ *
+ * @async
+ * @function createMateria
+ * @param {import("express").Request} request - Solicitud HTTP con los datos de la materia en `body`.
+ * @param {import("express").Response} response - Respuesta HTTP.
+ * @param {import("express").NextFunction} next - Middleware para propagar errores.
+ * @returns {Promise<import("express").Response|void>} Respuesta 201 con la materia, o delegación del error.
+ */
 export async function createMateria(request, response, next) {
  try {
    const payload = validateCreateMateria(request.body);
@@ -33,6 +66,17 @@ export async function createMateria(request, response, next) {
    return next(error);
  }
 }
+
+/**
+ * Valida y reemplaza todos los campos de una materia del usuario autenticado.
+ *
+ * @async
+ * @function replaceMateria
+ * @param {import("express").Request} request - Solicitud HTTP con el ID en `params` y los datos en `body`.
+ * @param {import("express").Response} response - Respuesta HTTP.
+ * @param {import("express").NextFunction} next - Middleware para propagar errores.
+ * @returns {Promise<import("express").Response|void>} Respuesta con la materia reemplazada, o delegación del error.
+ */
 export async function replaceMateria(request, response, next) {
  try {
    const id = validateMateriaId(request.params.id);
@@ -43,6 +87,17 @@ export async function replaceMateria(request, response, next) {
    return next(error);
  }
 }
+
+/**
+ * Valida y actualiza parcialmente una materia del usuario autenticado.
+ *
+ * @async
+ * @function updateMateria
+ * @param {import("express").Request} request - Solicitud HTTP con el ID en `params` y los campos en `body`.
+ * @param {import("express").Response} response - Respuesta HTTP.
+ * @param {import("express").NextFunction} next - Middleware para propagar errores.
+ * @returns {Promise<import("express").Response|void>} Respuesta con la materia actualizada, o delegación del error.
+ */
 export async function updateMateria(request, response, next) {
  try {
    const id = validateMateriaId(request.params.id);
@@ -53,6 +108,17 @@ export async function updateMateria(request, response, next) {
    return next(error);
  }
 }
+
+/**
+ * Elimina una materia del usuario autenticado.
+ *
+ * @async
+ * @function deleteMateria
+ * @param {import("express").Request} request - Solicitud HTTP con el ID en `params`.
+ * @param {import("express").Response} response - Respuesta HTTP.
+ * @param {import("express").NextFunction} next - Middleware para propagar errores.
+ * @returns {Promise<import("express").Response|void>} Respuesta 204, o delegación del error.
+ */
 export async function deleteMateria(request, response, next) {
  try {
    const id = validateMateriaId(request.params.id);
