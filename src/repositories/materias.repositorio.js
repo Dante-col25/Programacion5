@@ -157,23 +157,33 @@ export async function findByIdAndUserId(id, userId) {
 }
 
 /**
- * Busca las tareas de una materia que pertenece al usuario indicado.
+ * Consulta las tareas asociadas a una materia del usuario indicado.
  *
  * @async
- * @function findTareasByMateriaIdAndUserId
- * @param {string|number} materiaId - Identificador de la materia.
+ * @function findTareasByMateriaAndUserId
+ * @param {string|number} id - Identificador de la materia.
  * @param {string|number} userId - Identificador del usuario propietario.
- * @returns {Promise<Object[]>} Tareas asociadas a la materia y al usuario.
+ * @returns {Promise<Object[]>} Tareas encontradas; devuelve un arreglo vacío si no hay coincidencias.
  */
-export async function findTareasByMateriaIdAndUserId(materiaId, userId) {
+export async function findTareasByMateriaAndUserId(id, userId) {
   const [rows] = await pool.execute(
-    `SELECT t.*
+    `SELECT
+       t.id_tarea AS id,
+       t.id_materia AS materiaId,
+       t.titulo,
+       t.descripcion,
+       t.fecha_entrega AS fechaEntrega,
+       t.hora_entrega AS horaEntrega,
+       t.prioridad,
+       t.estado,
+       t.carga_estimada_minutos AS cargaEstimadaMinutos,
+       t.porcentaje_avance AS porcentajeAvance,
+       t.created_at AS createdAt,
+       t.updated_at AS updatedAt
      FROM tarea t
-     INNER JOIN materia m
-       ON m.id_materia = t.id_materia
-      AND m.id_usuario = t.id_usuario
-     WHERE t.id_materia = ? AND t.id_usuario = ?`,
-    [materiaId, userId]
+     INNER JOIN materia m ON m.id_materia = t.id_materia
+     WHERE m.id_materia = ? AND m.id_usuario = ?`,
+    [id, userId]
   );
 
   return rows;

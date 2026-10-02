@@ -44,18 +44,16 @@ export async function getMateriaById(id, userId) {
 }
 
 /**
- * Obtiene las tareas de una materia después de verificar que pertenece al usuario.
+ * Obtiene las tareas de una materia filtrando por su identificador y el usuario propietario.
  *
  * @async
- * @function listTareasByMateriaId
- * @param {string|number} materiaId - Identificador de la materia.
- * @param {string|number} userId - Identificador del usuario propietario.
- * @returns {Promise<Object[]>} Tareas de la materia, o una lista vacía si no tiene.
- * @throws {HttpError} Código 404 (Materia_not_found) si la materia no existe para ese usuario.
+ * @function listTareasByMateria
+ * @param {string|number} id - Identificador de la materia.
+ * @param {string|number} userId - Identificador del usuario propietario, tomado del contexto autenticado.
+ * @returns {Promise<Object[]>} Tareas encontradas, o un arreglo vacío si no hay coincidencias.
  */
-export async function listTareasByMateriaId(materiaId, userId) {
-  await getMateriaById(materiaId, userId);
-  return materiasRepository.findTareasByMateriaIdAndUserId(materiaId, userId);
+export async function listTareasByMateria(id, userId) {
+  return materiasRepository.findTareasByMateriaAndUserId(id, userId);
 }
 
 /**

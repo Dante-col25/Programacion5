@@ -51,16 +51,16 @@ export async function getMateriaById(request, response, next) {
  * Devuelve las tareas de una materia del usuario autenticado.
  *
  * @async
- * @function listTareasByMateriaId
+ * @function listTareasByMateria
  * @param {import("express").Request} request - Solicitud HTTP con el ID de la materia en `params`.
  * @param {import("express").Response} response - Respuesta HTTP.
  * @param {import("express").NextFunction} next - Middleware para propagar errores.
- * @returns {Promise<import("express").Response|void>} Respuesta con las tareas, o delegación del error.
+ * @returns {Promise<import("express").Response|void>} Respuesta 200 con las tareas o un arreglo vacío, o delegación del error.
  */
-export async function listTareasByMateriaId(request, response, next) {
+export async function listTareasByMateria(request, response, next) {
  try {
-   const materiaId = validateMateriaId(request.params.id);
-   const tareas = await materiasService.listTareasByMateriaId(materiaId, request.user.id);
+   const id = validateMateriaId(request.params.id);
+   const tareas = await materiasService.listTareasByMateria(id, request.user.id);
    return sendSuccess(response, tareas);
  } catch (error) {
    return next(error);

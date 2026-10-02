@@ -3,7 +3,7 @@ import { Router } from "express";
 import {
 listMaterias,
 getMateriaById,
-listTareasByMateriaId,
+listTareasByMateria,
 createMateria,
 replaceMateria,
 updateMateria,
@@ -12,7 +12,7 @@ deleteMateria
 const router = Router();
 //http://localhost:3000/api/v1/materias
 router.get("/", listMaterias);
-router.get("/:id/tareas", listTareasByMateriaId);
+router.get("/:id/tareas", listTareasByMateria);
 router.get("/:id", getMateriaById);
 router.post("/", createMateria);
 router.put("/:id", replaceMateria);
