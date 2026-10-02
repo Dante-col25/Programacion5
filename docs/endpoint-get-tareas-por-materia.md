@@ -85,4 +85,4 @@ Con el servidor en ejecución y MySQL conectado, se consultaron las tareas de la
 curl.exe http://localhost:3000/api/v1/materias/1/tareas
 ```
 
-La respuesta comprobada fue HTTP 200 con las dos tareas asociadas a Algoritmos, dentro de `data`.
+La respuesta de la prueba que se realizo fue HTTP 200 con las dos tareas asociadas a Algoritmos, dentro de `data`.
